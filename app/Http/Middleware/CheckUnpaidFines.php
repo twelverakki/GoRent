@@ -11,7 +11,7 @@ class CheckUnpaidFines
 {
     public function handle(Request $request, Closure $next): Response
     {
-        /* @var \app\Http\Models\User */
+        /** @var User $user */
 
         $user = Auth::user();
 
