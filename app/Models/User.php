@@ -2,31 +2,34 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+// Import library yang dibutuhkan
+use Illuminate\Database\Eloquent\Concerns\HasUuids; // PENTING: Agar ID otomatis jadi UUID
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    // HasUuids: Mengaktifkan generate UUID otomatis saat create user
+    // Notifiable: Agar user bisa menerima notifikasi email/database
+    use HasFactory, Notifiable, HasUuids;
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Daftar kolom yang aman diisi via formulir (User::create($request->all()))
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'phone',    // Nomor HP
+        'address',  // Alamat lengkap
+        'role',     // Peran: 'admin' atau 'customer'
     ];
 
     /**
      * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
+     * Kolom ini tidak akan muncul jika kita return data user ke JSON/API
      */
     protected $hidden = [
         'password',
@@ -35,14 +38,23 @@ class User extends Authenticatable
 
     /**
      * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Mengubah tipe data mentah database menjadi tipe data PHP yang sesuai
      */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password' => 'hashed', // Otomatis hash password saat disimpan
         ];
+    }
+
+    // --- RELASI ---
+
+    /**
+     * Satu User bisa memiliki BANYAK riwayat Rental (One to Many)
+     */
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class);
     }
 }

@@ -12,7 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rental_items', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            // Relasi UUID
+            $table->foreignUuid('rental_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('tool_id')->constrained();
+
+            $table->integer('quantity');
+            $table->decimal('price_snapshot', 10, 2);
+            $table->decimal('subtotal', 12, 2);
+
             $table->timestamps();
         });
     }

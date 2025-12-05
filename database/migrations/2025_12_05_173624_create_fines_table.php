@@ -12,7 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('fines', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            // Relasi UUID
+            $table->foreignUuid('rental_id')->constrained()->onDelete('cascade');
+
+            $table->decimal('amount', 12, 2);
+            $table->text('reason');
+            $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
+
             $table->timestamps();
         });
     }

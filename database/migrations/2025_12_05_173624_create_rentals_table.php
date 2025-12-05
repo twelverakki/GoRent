@@ -12,7 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rentals', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained()->onDelete('cascade');
+            $table->string('invoice_no')->unique();
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
+            $table->dateTime('return_date')->nullable();
+            $table->decimal('total_price', 12, 2);
+            $table->enum('status', ['pending', 'paid', 'active', 'completed', 'cancelled', 'overdue'])->default('pending');
             $table->timestamps();
         });
     }
