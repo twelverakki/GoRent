@@ -14,6 +14,9 @@ class User extends Authenticatable
     // Notifiable: Agar user bisa menerima notifikasi email/database
     use HasFactory, Notifiable, HasUuids;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     /**
      * The attributes that are mass assignable.
      * Daftar kolom yang aman diisi via formulir (User::create($request->all()))

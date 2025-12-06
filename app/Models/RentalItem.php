@@ -10,6 +10,9 @@ class RentalItem extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'rental_id',    // Milik nota mana
         'tool_id',      // Barang apa yang disewa

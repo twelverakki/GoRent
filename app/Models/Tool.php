@@ -12,13 +12,18 @@ class Tool extends Model
     // SoftDeletes: Saat dihapus, data tidak hilang permanen, cuma disembunyikan (deleted_at terisi)
     use HasFactory, HasUuids, SoftDeletes;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'category_id', // Foreign Key
         'name',
         'slug',
+        'condition',
         'description',
         'image',
         'price_per_day',
+        'late_fee_per_day',
         'stock',
         'is_available', // Status apakah barang bisa disewa
     ];

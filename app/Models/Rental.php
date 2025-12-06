@@ -10,6 +10,18 @@ class Rental extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    public const STATUS_LABELS = [
+        'pending' => 'Menunggu',
+        'paid' => 'Siap Ambil',
+        'active' => 'Sedang Disewa',
+        'completed' => 'Selesai',
+        'overdue' => 'Terlambat',
+        'cancelled' => 'Batal'
+    ];
+
     protected $fillable = [
         'user_id',      // Siapa yang menyewa
         'invoice_no',   // Nomor unik nota

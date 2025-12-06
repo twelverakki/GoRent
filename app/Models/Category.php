@@ -11,6 +11,9 @@ class Category extends Model
     // Menggunakan UUID sebagai Primary Key
     use HasFactory, HasUuids;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'name',
         'slug' // URL friendly version dari name (misal: 'kamera-sony')

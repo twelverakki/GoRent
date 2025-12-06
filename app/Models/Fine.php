@@ -10,6 +10,9 @@ class Fine extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'rental_id', // Terhubung ke transaksi rental mana
         'amount',    // Nominal denda

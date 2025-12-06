@@ -1,59 +1,178 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📸 GoRent - Sistem Manajemen Penyewaan Alat
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 
-## About Laravel
+**GoRent** adalah aplikasi web modern untuk manajemen penyewaan peralatan (kamera, lensa, drone, dll). Sistem ini mendigitalisasi seluruh siklus sewa mulai dari pemesanan pelanggan hingga pengembalian barang, dilengkapi dengan **Notifikasi WhatsApp Otomatis** (via Fonntee) dan manajemen stok yang akurat.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🛠️ Fitur Sistem & Admin
 
-## Learning Laravel
+-   **Dashboard Analitik:** Menampilkan ringkasan transaksi terbaru dan **Total Revenue** (Pendapatan Riil).
+-   **Manajemen Inventaris:** CRUD Alat dengan kategori, harga sewa per hari, dan manajemen stok otomatis.
+-   **Manajemen Pengguna:** Kelola akun Admin dan Customer (Lihat, Edit, Hapus).
+-   **Proses Pengembalian Cerdas:**
+    -   Perhitungan **Denda Keterlambatan** otomatis (berdasarkan hari terlambat).
+    -   Input **Denda Kerusakan** manual saat pengembalian barang.
+    -   _Restock_ otomatis saat status transaksi menjadi `completed`.
+-   **Keamanan:** Menggunakan **UUID/ULID** sebagai Primary Key untuk User dan model utama lainnya.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 🛒 Fitur Pelanggan (Customer)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-   **Katalog Interaktif:** Pencarian dan filter alat yang tersedia.
+-   **Sistem Keranjang (Cart):** Menambah beberapa alat sebelum _checkout_.
+-   **Riwayat Transaksi:** Memantau status sewa (Pending, Paid, Rented, Completed, Cancelled).
+-   **Validasi Booking:** Sistem mencegah pemilihan tanggal sewa yang tidak logis (minimal 1 hari).
 
-## Laravel Sponsors
+### 📱 Integrasi WhatsApp Gateway (Fonntee)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Aplikasi ini mengirimkan notifikasi _real-time_ untuk event berikut:
 
-### Premium Partners
+1.  **Checkout Berhasil:** Pesan detail tagihan ke Customer.
+2.  **Pesanan Baru:** Notifikasi "Action Needed" ke Admin setiap ada order masuk.
+3.  **Konfirmasi Pembayaran:** Notifikasi ke Customer saat Admin mengubah status menjadi `paid`.
+4.  **Selesai Sewa:** Laporan pengembalian dan rincian denda (jika ada) ke Customer.
+5.  **Registrasi:** Sambutan otomatis untuk pengguna baru.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## ⚙️ Teknologi yang Digunakan
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+-   **Backend:** PHP 8.2+, Laravel 11
+-   **Frontend:** Blade Template, Tailwind CSS, Alpine.js
+-   **Database:** MySQL / MariaDB / SQLite
+-   **API Service:** Fonntee (WhatsApp Gateway)
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🚀 Panduan Instalasi (Lokal)
 
-## Security Vulnerabilities
+Ikuti langkah-langkah ini untuk menjalankan proyek di komputer Anda.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 1. Prasyarat
 
-## License
+Pastikan Anda telah menginstal:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+-   PHP >= 8.2
+-   Composer
+-   Node.js & NPM
+
+### 2. Kloning Repositori
+
+```bash
+git clone [https://github.com/username-anda/gorent.git](https://github.com/username-anda/gorent.git)
+cd gorent
+```
+
+### 3. Instalasi Dependensi
+
+```bash
+composer install
+npm install
+```
+
+### 4. Instalasi Dependensi
+
+```bash
+cp .env.example .env
+```
+
+Buka file .env dan sesuaikan konfigurasi berikut
+
+A. Database
+
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=db_gorent
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+B. WhatsApp Fonntee & Admin: Dapatkan API Key di dashboard Fonntee Anda.
+
+```
+FONNTEE_API_KEY="ISI_API_KEY_ANDA_DISINI"
+FONNTEE_BASE_URL="[https://api.fonnte.com/send](https://api.fonnte.com/send)"
+
+# Nomor Admin untuk menerima notifikasi order (Format 62...)
+ADMIN_WA_NUMBER="6281234567890"
+```
+
+### 5. Generate Key & Migrasi
+
+Buat App Key dan jalankan migrasi database serta seeder (data dummy).
+
+```
+php artisan key:generate
+php artisan migrate --seed
+```
+
+### 6. Setup Storage
+
+Buat symlink agar gambar alat dapat diakses publik:
+
+```
+php artisan storage:link
+```
+
+### 7. Jalankan Aplikasi
+
+Jalankan server backend dan frontend (dalam 2 terminal terpisah):
+
+A. Terminal 1 (Laravel):
+
+```
+php artisan serve
+```
+
+B. Terminal 2 (Vite):
+
+```
+npm run dev
+```
+
+Akses aplikasi di: http://127.0.0.1:8000
+
+### 👤 Akun Demo (Seeder)
+
+Jika Anda menjalankan `php artisan migrate --seed`, akun berikut tersedia untuk pengujian::
+
+| Role         | Nama          | Email              | Password   | No. HP       | Keterangan                       |
+| :----------- | :------------ | :----------------- | :--------- | :----------- | :------------------------------- |
+| **Admin**    | Kennan Admin  | `admin@gorent.com` | `password` | 081234567890 | Akses Dashboard & Kelola Sistem  |
+| **Customer** | Jems Customer | `jems@gmail.com`   | `password` | 08987654321  | Skenario User Normal (Baik)      |
+| **Customer** | Bad Boy       | `bad@gmail.com`    | `password` | 08111111111  | Skenario User Bermasalah (Denda) |
+
+### 📂 Struktur Folder Penting
+
+app/Http/Controllers/Admin - Controller untuk logika Admin (Return, Tools, Dashboard).
+
+app/Http/Controllers/RentalController.php - Logika Checkout & Transaksi.
+
+app/Services/WhatsAppService.php - Service khusus untuk integrasi API Fonntee.
+
+app/Models/User.php - Model User (dikonfigurasi dengan UUID).
+
+routes/web.php - Definisi rute untuk Guest, Customer, dan Admin.
+
+### 🤝 Kontribusi
+
+Fork repositori ini.
+
+Buat branch fitur baru (git checkout -b fitur-baru).
+
+Commit perubahan Anda (git commit -m 'Menambahkan fitur X').
+
+Push ke branch tersebut (git push origin fitur-baru).
+
+Buat Pull Request.
+
+### 📝 Lisensi
+
+Proyek ini bersifat open-source di bawah lisensi MIT.
