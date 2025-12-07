@@ -1,66 +1,149 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
-
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+<x-auth-layout>
+    <div class="grid md:grid-cols-2 h-full place-items-center">
+        <div class="flex flex-col md:pb-16 max-md:mt-15 max-md:mb-10 z-10 text-white">
+            <div class="flex-shrink-0 flex items-center mb-4">
+                <a href="{{ route('home') }}" class="text-2xl font-bold tracking-wider">
+                    G O R E N T
+                </a>
+            </div>
+            <h2 class="mt-6 text-7xl font-bold">Create an account</h2>
+            <p class="mt-2 text-sm">Start your journey with us today.</p>
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <form method="POST" action="{{ route('register') }}" class="flex flex-wrap z-10 bg-white/20 w-full py-6 rounded-xl text-black font-bold">
+            @csrf
 
-        <!-- Address -->
-        <div class="mt-4">
-            <x-input-label for="address" :value="__('Address')" />
-            <x-text-input id="address" class="block mt-1 w-full" type="text" name="address" :value="old('address')" required autocomplete="address" />
-            <x-input-error :messages="$errors->get('address')" class="mt-2" />
-        </div>
 
-        <!-- Phone -->
-        <div class="mt-4">
-            <x-input-label for="phone" :value="__('Phone')" />
-            <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" required autocomplete="phone" />
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
-        </div>
+            <div
+                class="flex-[0_0_auto] flex flex-col w-full gap-[7px] relative mb-[30px] px-2"
+            >
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ old('name') }}"
+                    required
+                    class="peer h-[45px] rounded-md border-none outline-none px-[7px] text-[15px] bg-transparent backdrop-blur-sm shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4)] focus:shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4),inset_3px_3px_10px_rgba(0,0,0,1),inset_-1px_-1px_6px_rgba(255,255,255,0.4)]"
+                    placeholder=""
+                />
+                <label
+                    class="absolute left-[18px] top-[13px] text-[15px] transition-all peer-focus:-translate-y-[35px] peer-focus:pl-[2px] peer-valid:-translate-y-[35px] peer-valid:pl-[2px]"
+                >
+                    Nama Lengkap
+                </label>
+                <x-input-error :messages="$errors->get('name')" class="mt-1" />
+            </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <div
+                class="flex-[0_0_auto] flex flex-col w-full gap-[7px] relative mb-[30px] px-2"
+            >
+                <input
+                    type="email"
+                    name="email"
+                    value="{{ old('email') }}"
+                    required
+                    class="peer h-[45px] rounded-md border-none outline-none px-[7px] text-[15px] bg-transparent backdrop-blur-sm shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4)] focus:shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4),inset_3px_3px_10px_rgba(0,0,0,1),inset_-1px_-1px_6px_rgba(255,255,255,0.4)]"
+                    placeholder=""
+                />
+                <label
+                    class="absolute left-[18px] top-[13px] text-[15px] transition-all peer-focus:-translate-y-[35px] peer-focus:pl-[2px] peer-valid:-translate-y-[35px] peer-valid:pl-[2px]"
+                >
+                    Email
+                </label>
+                <x-input-error :messages="$errors->get('email')" class="mt-1" />
+            </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+            <div
+                class="flex-[0_0_auto] flex flex-col w-full gap-[7px] relative mb-[30px] px-2"
+            >
+                <input
+                    type="text"
+                    name="address"
+                    value="{{ old('address') }}"
+                    required
+                    class="peer h-[45px] rounded-md border-none outline-none px-[7px] text-[15px] bg-transparent backdrop-blur-sm shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4)] focus:shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4),inset_3px_3px_10px_rgba(0,0,0,1),inset_-1px_-1px_6px_rgba(255,255,255,0.4)]"
+                    placeholder=""
+                />
+                <label
+                    class="absolute left-[18px] top-[13px] text-[15px] transition-all peer-focus:-translate-y-[35px] peer-focus:pl-[2px] peer-valid:-translate-y-[35px] peer-valid:pl-[2px]"
+                >
+                    Address
+                </label>
+                <x-input-error :messages="$errors->get('address')" class="mt-1" />
+            </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            <div
+                class="flex-[0_0_auto] flex flex-col w-full gap-[7px] relative mb-[30px] px-2"
+            >
+                <input
+                    type="text"
+                    name="phone"
+                    value="{{ old('phone') }}"
+                    required
+                    class="peer h-[45px] rounded-md border-none outline-none px-[7px] text-[15px] bg-transparent backdrop-blur-sm shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4)] focus:shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4),inset_3px_3px_10px_rgba(0,0,0,1),inset_-1px_-1px_6px_rgba(255,255,255,0.4)]"
+                    placeholder=""
+                />
+                <label
+                    class="absolute left-[18px] top-[13px] text-[15px] transition-all peer-focus:-translate-y-[35px] peer-focus:pl-[2px] peer-valid:-translate-y-[35px] peer-valid:pl-[2px]"
+                >
+                    Phone Number
+                </label>
+                <x-input-error :messages="$errors->get('phone')" class="mt-1" />
+            </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+            <div
+                class="flex-[0_0_auto] w-full flex flex-col gap-[7px] relative mb-[30px] px-2"
+            >
+                <input
+                    type="password"
+                    name="password"
+                    required
+                    class="peer h-[45px] rounded-md border-none outline-none px-[7px] text-[15px] bg-transparent backdrop-blur-sm shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4)] focus:shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4),inset_3px_3px_10px_rgba(0,0,0,1),inset_-1px_-1px_6px_rgba(255,255,255,0.4)]"
+                    placeholder=" "
+                />
+                <label
+                    class="absolute left-[18px] top-[13px] text-[15px] transition-all peer-focus:-translate-y-[35px] peer-focus:pl-[2px] peer-valid:-translate-y-[35px] peer-valid:pl-[2px]"
+                >
+                    Password
+                </label>
+                <x-input-error :messages="$errors->get('password')" class="mt-1" />
+            </div>
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+            <div
+                class="flex-[0_0_auto] w-full flex flex-col gap-[7px] relative mb-[30px] px-2"
+            >
+                <input
+                    type="password"
+                    name="password_confirmation"
+                    required
+                    class="peer h-[45px] rounded-md border-none outline-none px-[7px] text-[15px] bg-transparent backdrop-blur-sm shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4)] focus:shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4),inset_3px_3px_10px_rgba(0,0,0,1),inset_-1px_-1px_6px_rgba(255,255,255,0.4)]"
+                    placeholder=" "
+                />
+                <label
+                    class="absolute left-[18px] top-[13px] text-[15px] transition-all peer-focus:-translate-y-[35px] peer-focus:pl-[2px] peer-valid:-translate-y-[35px] peer-valid:pl-[2px]"
+                >
+                    Konfirmasi Password
+                </label>
+            </div>
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+            <div
+                class="flex-[0_0_auto] w-full flex flex-col gap-[7px] relative px-2"
+            >
+                <button
+                    type="submit"
+                    class="h-[45px] rounded-md border-none outline-none px-[7px] text-[15px] backdrop-blur-sm focus:shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4)] shadow-[3px_3px_10px_rgba(0,0,0,1),-1px_-1px_6px_rgba(255,255,255,0.4),inset_3px_3px_10px_rgba(0,0,0,1),inset_-1px_-1px_6px_rgba(255,255,255,0.4)] font-bold transition hover:opacity-90"
+                >
+                    Buat Akun
+                </button>
+            </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+            <div class="mt-8 text-center w-full">
+                <p class="text-md">
+                    Already have an account?
+                    <a href="{{ route('login') }}" class="font-bold text-[#456845] hover:text-[#395339] transition">Log in</a>
+                </p>
+            </div>
+        </form>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+
+    </div>
+</x-auth-layout>

@@ -7,6 +7,7 @@ use App\Models\Rental;
 use App\Models\Tool;
 use App\Models\User;
 use App\Models\Fine;
+use App\Models\RentalItem;
 
 class DashboardController extends Controller
 {
@@ -21,7 +22,7 @@ class DashboardController extends Controller
         // 2. Hitung statistik untuk kartu-kartu di atasnya
 
         // Total Alat (Tidak Berubah)
-        $totalTools = Tool::count();
+        $totalTools = Tool::sum('stock');
 
         // 💡 PERHITUNGAN BARU: Total Revenue
         // Menghitung total_price dari semua rental yang statusnya 'completed'
@@ -30,8 +31,10 @@ class DashboardController extends Controller
         // Total Pelanggan (Tidak Berubah)
         $totalCustomers = User::where('role', 'customer')->count();
 
-        // Total Denda Belum Dibayar (Tidak Berubah)
-        $unpaidFines = Fine::where('status', 'unpaid')->count();
+        // Total alat yang tersewa saat ini
+        $totalRentActive = RentalItem::whereHas('rental', function ($query) {
+            $query->where('status', 'active');
+        })->sum('quantity');
 
         return view('admin.dashboard', compact(
             'recentRentals',
@@ -39,7 +42,7 @@ class DashboardController extends Controller
             // 💡 Mengganti 'activeRentals' dengan 'totalRevenue'
             'totalRevenue',
             'totalCustomers',
-            'unpaidFines'
+            'totalRentActive'
         ));
     }
 }

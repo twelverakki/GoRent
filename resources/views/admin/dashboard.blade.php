@@ -21,19 +21,6 @@
 
         <div class="bg-white p-6 rounded-[2rem] shadow-sm flex flex-col justify-between h-40">
             <div class="flex justify-between items-start">
-                <div class="p-3 bg-blue-50 rounded-2xl text-blue-500">
-                    {{-- <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> --}}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-5 h-5" viewBox="0 0 16 16"><path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2zm3.564 1.426L5.596 5 8 5.961 14.154 3.5zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464z"/></svg>
-                </div>
-            </div>
-            <div>
-                <h3 class="text-3xl font-bold text-slate-800">{{ $totalTools }}</h3>
-                <p class="text-slate-400 text-sm font-medium">Total Alat</p>
-            </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-[2rem] shadow-sm flex flex-col justify-between h-40">
-            <div class="flex justify-between items-start">
                 <div class="p-3 bg-purple-50 rounded-2xl text-purple-500">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
                         <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
@@ -46,6 +33,19 @@
             </div>
         </div>
 
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm flex flex-col justify-between h-40">
+            <div class="flex justify-between items-start">
+                <div class="p-3 bg-blue-50 rounded-2xl text-blue-500">
+                    {{-- <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> --}}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-5 h-5" viewBox="0 0 16 16"><path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2zm3.564 1.426L5.596 5 8 5.961 14.154 3.5zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464z"/></svg>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-3xl font-bold text-slate-800">{{ $totalTools }}</h3>
+                <p class="text-slate-400 text-sm font-medium">Total Alat Tersedia</p>
+            </div>
+        </div>
+
         <div class="bg-white p-6 rounded-[2rem] shadow-sm flex flex-col justify-between h-40 border-2 border-dashed border-gray-100">
             <div class="flex justify-between items-start">
                 <div class="p-3 bg-orange-50 rounded-2xl text-orange-500">
@@ -53,8 +53,8 @@
                 </div>
             </div>
             <div>
-                <h3 class="text-3xl font-bold text-slate-800">{{ $unpaidFines }}</h3>
-                <p class="text-slate-400 text-sm font-medium">Kasus Denda</p>
+                <h3 class="text-3xl font-bold text-slate-800">{{ $totalRentActive }}</h3>
+                <p class="text-slate-400 text-sm font-medium">Sedang Disewa</p>
             </div>
         </div>
     </div>

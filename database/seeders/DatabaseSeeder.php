@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
         // 1. BUAT USER (Admin & Customer)
         // ------------------------------------------
         $admin = User::create([

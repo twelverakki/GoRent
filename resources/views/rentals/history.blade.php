@@ -63,16 +63,25 @@
 
                         <div>
                             @if($rental->status == 'pending')
-                                <a href="https://wa.me/6281234567890?text=Halo Admin, saya mau konfirmasi pembayaran untuk Invoice {{ $rental->invoice_no }}"
-                                   target="_blank"
-                                   class="inline-flex items-center px-6 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-500 transition shadow-lg">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                {{-- Tombol ke Halaman Upload Bukti Bayar --}}
+                                <a href="{{ route('rentals.payment', $rental->id) }}"
+                                class="inline-flex items-center px-6 py-2.5 bg-rose-500 text-white rounded-xl text-sm font-bold hover:bg-rose-600 transition shadow-lg shadow-rose-200">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                                     Konfirmasi Bayar
                                 </a>
-                            @elseif($rental->status == 'active')
+
+                            @elseif($rental->status == 'paid')
+                                {{-- Status Menunggu Verifikasi --}}
+                                <span class="inline-flex items-center px-4 py-2 bg-orange-50 text-orange-600 rounded-xl text-sm font-bold border border-orange-100 cursor-default">
+                                    <svg class="w-4 h-4 mr-2 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Menunggu Verifikasi
+                                </span>
+
+                            @elseif($rental->status == 'approved' || $rental->status == 'active')
                                 <span class="text-sm font-bold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-lg border border-emerald-100">
                                     Sedang Disewa
                                 </span>
+
                             @elseif($rental->status == 'completed')
                                 <a href="{{ route('rentals.create') }}" class="text-sm font-bold text-slate-500 hover:text-rose-500 underline">
                                     Sewa Lagi

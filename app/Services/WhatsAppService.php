@@ -5,56 +5,47 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Class WhatsAppService
- * * Service khusus untuk menangani integrasi dengan API Fonnte.
- * Digunakan untuk mengirim notifikasi otomatis ke WA user/admin.
- */
 class WhatsAppService
 {
-    protected $apiKey;
-    protected $baseUrl;
-
-    public function __construct()
-    {
-        // Mengambil apiKey Fonnte dari file .env untuk keamanan
-        $this->apiKey = env('FONNTE_API_KEY');
-        $this->baseUrl = env('FONNTEE_BASE_URL', 'https://api.fonnte.com/send');
-    }
-
     /**
-     * Mengirim pesan teks ke nomor WhatsApp target.
-     *
-     * @param string $target Nomor HP tujuan (contoh: 08123...)
-     * @param string $message Isi pesan yang akan dikirim
-     * @return bool True jika sukses, False jika gagal
+     * Kirim pesan WhatsApp via Fonnte
+     * @param string $target Nomor tujuan (08xx atau 62xx)
+     * @param string $message Isi pesan
+     * @return bool
      */
-    public function sendMessage(string $target, string $message): array
+    public function sendMessage($target, $message)
     {
-        if (empty($this->apiKey)) {
-            Log::warning('FONNTEE_API_KEY tidak diatur. Notifikasi WA dilewati.');
-            return ['status' => 'error', 'message' => 'API Key not set'];
+        // Ambil config dari .env
+        $token = env('FONNTEE_API_KEY');
+        $url = env('FONNTEE_BASE_URL', 'https://api.fonnte.com/send');
+
+        // Validasi Token
+        if (empty($token)) {
+            Log::error('WhatsApp Error: FONNTEE_API_KEY belum diisi di .env');
+            return false;
         }
 
-        // Membersihkan dan memformat nomor ke 628...
-        $target = preg_replace('/\D/', '', $target);
-        if (substr($target, 0, 1) === '0') {
-            $target = '62' . substr($target, 1);
-        } elseif (substr($target, 0, 2) !== '62') {
-             $target = '62' . $target;
+        try {
+            // Kirim Request ke Fonnte
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+            ])->post($url, [
+                'target' => $target,
+                'message' => $message,
+                'countryCode' => '62', // Otomatis convert 08 ke 62
+            ]);
+
+            // Cek Response
+            if ($response->successful()) {
+                Log::info("WA Terkirim ke $target");
+                return true;
+            } else {
+                Log::error("Gagal kirim WA ke $target: " . $response->body());
+                return false;
+            }
+        } catch (\Exception $e) {
+            Log::error("WA Exception: " . $e->getMessage());
+            return false;
         }
-
-        $response = Http::withHeaders([
-            'Authorization' => $this->apiKey,
-        ])->asForm()->post($this->baseUrl, [
-            'target' => $target,
-            'message' => $message,
-        ]);
-
-        if ($response->failed()) {
-            Log::error('Fonntee API Gagal mengirim pesan', ['response' => $response->json(), 'target' => $target]);
-        }
-
-        return $response->json();
     }
 }

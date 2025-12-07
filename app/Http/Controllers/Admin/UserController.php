@@ -44,11 +44,15 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed', // Password opsional saat update
             'role' => ['required', 'string', Rule::in(['admin', 'customer'])],
+            'phone' => ['required', 'string', 'max:15'],
+            'address' => ['required', 'string'],
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
             'role' => $request->role,
             'password' => $request->password ? Hash::make($request->password) : $user->password,
         ]);

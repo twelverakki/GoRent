@@ -28,6 +28,20 @@
                             <x-input-error class="mt-2" :messages="$errors->get('email')" />
                         </div>
 
+                        {{-- Phone --}}
+                        <div class="mb-4">
+                            <x-input-label for="phone" value="Phone Number" />
+                            <x-text-input id="phone" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $user->phone)" required autofocus />
+                            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+                        </div>
+
+                        {{-- Address --}}
+                        <div class="mb-4">
+                            <x-input-label for="address" value="Phone Number" />
+                            <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $user->address)" required autofocus />
+                            <x-input-error class="mt-2" :messages="$errors->get('address')" />
+                        </div>
+
                         {{-- Role (Peran) --}}
                         <div class="mb-6">
                             <x-input-label for="role" value="Peran" />

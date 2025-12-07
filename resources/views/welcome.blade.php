@@ -24,17 +24,14 @@
                     <a href="{{ route('public.tool.index') }}" class="px-8 py-4 bg-slate-900 text-white rounded-full font-bold shadow-xl shadow-rose-200 hover:bg-rose-600 transition transform hover:-translate-y-1">
                         SHOP COLLECTION
                     </a>
-                    <a href="#featured" class="px-8 py-4 bg-white text-slate-700 rounded-full font-bold shadow-sm border border-slate-100 hover:bg-slate-50 transition">
-                        Lihat Promo
-                    </a>
                 </div>
             </div>
 
             <div class="relative z-10 flex justify-center">
                 <div class="relative w-full max-w-lg">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-rose-200 to-orange-100 rounded-full blur-xl opacity-60 scale-90"></div>
+                    <div class="absolute inset-0 bg-gradient-to-tr from-rose-200 to-orange-100 rounded-full blur-xl opacity-60 scale-90 z-0"></div>
 
-                    <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-50 flex items-center gap-3 animate-bounce">
+                    {{-- <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-50 flex items-center gap-3 animate-bounce">
                         <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         </div>
@@ -42,7 +39,10 @@
                             <p class="text-xs text-slate-400 font-bold">CONDITION</p>
                             <p class="text-sm font-bold text-slate-800">Perfect 100%</p>
                         </div>
-                    </div>
+                    </div> --}}
+
+                    <img src="storage/images/4K-DSLR-camera.png" class="hidden md:block w-full z-20 relative transition duration-500">
+
                 </div>
             </div>
 
@@ -63,7 +63,7 @@
                         READ MORE
                     </a>
                 </div>
-                <img src="https://pngimg.com/d/camera_lens_PNG125.png" class="absolute -bottom-10 -right-10 w-48 opacity-50 group-hover:scale-110 group-hover:rotate-12 transition duration-500">
+                <img src="storage/images/cinema-lenses.png" class="absolute -bottom-10 -right-10 w-48 opacity-50 group-hover:scale-110 group-hover:rotate-12 transition duration-500">
             </div>
 
             <div class="relative h-80 rounded-[2rem] overflow-hidden group">
@@ -77,7 +77,7 @@
                         READ MORE
                     </a>
                 </div>
-                <img src="" class="absolute bottom-5 -right-5 w-40 opacity-60 group-hover:scale-110 group-hover:-rotate-12 transition duration-500">
+                <img src="storage/images/mirrorless-reinvented.png" class="absolute bottom-5 -right-5 w-40 opacity-60 group-hover:scale-110 group-hover:-rotate-12 transition duration-500">
             </div>
 
             <div class="relative h-80 rounded-[2rem] overflow-hidden group">
@@ -91,7 +91,7 @@
                         READ MORE
                     </a>
                 </div>
-                <img src="" class="absolute bottom-0 -right-10 w-56 opacity-60 group-hover:scale-110 transition duration-500">
+                <img src="storage/images/cinema-cam.png" class="absolute bottom-0 -right-10 w-56 opacity-60 group-hover:scale-110 transition duration-500">
             </div>
 
         </div>
@@ -103,10 +103,16 @@
             <h2 class="text-4xl font-black text-slate-900 mt-2">Featured Products</h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             @foreach($tools as $tool)
                 @include('components.card-tool', ['tool' => $tool])
             @endforeach
+        </div>
+
+        <div class="text-center">
+            <a href="{{ route('public.tool.index') }}" class="px-8 py-4 bg-slate-900 text-white rounded-full font-bold shadow-xl shadow-rose-200 hover:bg-rose-600 transition transform hover:-translate-y-1">
+                See More
+            </a>
         </div>
     </div>
 

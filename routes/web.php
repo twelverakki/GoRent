@@ -53,12 +53,20 @@ Route::middleware('auth')->group(function () {
         Route::middleware(['no.fines'])->group(function () {
             Route::get('/checkout', [RentalController::class, 'create'])->name('rentals.create'); // Tidak butuh parameter ID lagi
             Route::post('/rentals', [RentalController::class, 'store'])->name('rentals.store');
+            // Route untuk Customer (Upload Bukti)
+        Route::middleware(['auth', 'role:customer'])->group(function () {
+            Route::get('/rental/{rental}/payment', [App\Http\Controllers\RentalController::class, 'paymentForm'])->name('rentals.payment');
+            Route::post('/rental/{rental}/payment', [App\Http\Controllers\RentalController::class, 'uploadPayment'])->name('rentals.payment.upload');
+        });
+
+// Route untuk Admin (Verifikasi) sudah ada di resource, kita update Controller-nya saja.
         });
 
         // CART ROUTES
         Route::get('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
         Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
         // Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+
     });
 
 
@@ -72,18 +80,17 @@ Route::middleware('auth')->group(function () {
         // Manajemen Inventaris Alat (CRUD Lengkap)
         Route::resource('tools', ToolController::class);
 
-        // 💡 TAMBAHKAN INI: Manajemen Pengguna (CRUD)
+        // Manajemen Kategori (CRUD)
+        Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
+
+        // Manajemen Pengguna (CRUD)
         Route::resource('users', UserController::class)->only(['index', 'edit', 'update', 'destroy']);
 
         // Manajemen Transaksi & Pengembalian
         Route::get('/rentals', [ReturnController::class, 'index'])->name('rentals.index');       // List Semua
         Route::get('/rentals/{rental}', [ReturnController::class, 'show'])->name('rentals.show'); // Detail Nota
         Route::put('/rentals/{rental}', [ReturnController::class, 'updateStatus'])->name('rentals.update'); // Update Pesanan
-
-        // Proses Return & Denda
-        // 1. UPDATE STATUS (Misalnya: Konfirmasi Bayar / admin.rentals.update)
-        // Route ini memanggil metode updateStatus() yang baru kita buat.
-        Route::put('/rentals/{rental:id}', [ReturnController::class, 'updateStatus'])->name('rentals.update');
+        Route::put('/rentals/{rental:id}', [ReturnController::class, 'updateStatus'])->name('rentals.update'); // Update Pesanan
         Route::get('/rentals/{rental}/return', [ReturnController::class, 'edit'])->name('rentals.return');
         Route::put('/rentals/{rental}/return', [ReturnController::class, 'update'])->name('rentals.process_return');
     });

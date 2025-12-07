@@ -1,14 +1,14 @@
 <x-frontend-layout>
 
 
-<header class="bg-gray-50 border-b border-gray-200 pt-20">
+<header class="bg-gray-50 pt-20">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold leading-tight text-gray-900">
-            Katalog Alat Sewa Kami
-        </h1>
-        <p class="mt-1 text-md text-gray-600">
-            Temukan dan sewa peralatan terbaik untuk kebutuhan proyekmu.
-        </p>
+        <form action="{{ route('public.tool.index') }}" method="GET">
+            <div class="relative">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Find products..." class="w-full pl-10 border-gray-200 bg-gray-50 rounded-3xl text-sm focus:ring-rose-200 focus:border-rose-300 ring-rose-200 transition">
+                <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+        </form>
     </div>
 </header>
 

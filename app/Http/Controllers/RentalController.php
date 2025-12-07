@@ -11,11 +11,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class RentalController extends Controller
 {
     protected $waService;
 
+    // Inject WhatsAppService agar bisa dipakai di method store
     public function __construct(WhatsAppService $waService)
     {
         $this->waService = $waService;
@@ -23,10 +25,9 @@ class RentalController extends Controller
 
     public function index()
     {
-        // Ambil 4 barang terbaru untuk ditampilkan di Homepage
+        // Menampilkan 4 alat di halaman depan
         $tools = Tool::with('category')
                     ->where('stock', '>', 0)
-                    ->where('is_available', true)
                     ->latest()
                     ->take(4)
                     ->get();
@@ -34,51 +35,62 @@ class RentalController extends Controller
         return view('welcome', compact('tools'));
     }
 
+    public function create()
+    {
+        $cart = session()->get('cart', []);
+
+        // Cek jika keranjang kosong
+        if(empty($cart)) {
+            return redirect()->route('catalog')->with('error', 'Keranjang masih kosong.');
+        }
+
+        $tools = Tool::whereIn('id', array_keys($cart))->get();
+
+        return view('rentals.create', compact('tools'));
+    }
+
     public function store(Request $request)
     {
         // 1. Validasi Input
         $request->validate([
             'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|different:start_date',
+            'end_date' => 'required|date|after:start_date', // Gunakan after start_date
             'tools' => 'required|array',
             'tools.*.id' => 'required|exists:tools,id',
             'tools.*.qty' => 'required|integer|min:1',
         ]);
 
         try {
-            // Mulai Transaksi Database
             DB::beginTransaction();
 
             $startDate = Carbon::parse($request->start_date);
             $endDate = Carbon::parse($request->end_date);
+            // Hitung selisih hari (minimal 1 hari)
             $duration = $startDate->diffInDays($endDate) ?: 1;
 
-            // 2. Buat Header Transaksi (Rental)
+            // 2. Buat Header Transaksi
             $rental = Rental::create([
                 'user_id' => Auth::id(),
                 'invoice_no' => 'INV-' . strtoupper(Str::random(10)),
                 'start_date' => $startDate,
                 'end_date' => $endDate,
-                'total_price' => 0,
+                'total_price' => 0, // Nanti diupdate
                 'status' => 'pending',
             ]);
 
             $totalPrice = 0;
 
-            // 3. Loop Item yang disewa
+            // 3. Loop Item & Kurangi Stok
             foreach ($request->tools as $itemData) {
-                $tool = Tool::findOrFail($itemData['id']);
+                $tool = Tool::lockForUpdate()->find($itemData['id']); // Lock baris biar aman dari race condition
 
-                // Cek Stok (Pencegahan backend)
                 if ($tool->stock < $itemData['qty']) {
                     throw new \Exception("Stok {$tool->name} tidak mencukupi.");
                 }
 
-                // Hitung Subtotal (Harga master x Durasi x Qty)
                 $subtotal = $tool->price_per_day * $duration * $itemData['qty'];
                 $totalPrice += $subtotal;
 
-                // Simpan ke rental_items
                 RentalItem::create([
                     'rental_id' => $rental->id,
                     'tool_id' => $tool->id,
@@ -87,84 +99,112 @@ class RentalController extends Controller
                     'subtotal' => $subtotal,
                 ]);
 
-                // KURANGI STOK
                 $tool->decrement('stock', $itemData['qty']);
             }
 
-            // Update Total Harga di Header
+            // Update Total Harga
             $rental->update(['total_price' => $totalPrice]);
 
-            // Commit (Simpan Permanen)
             DB::commit();
 
             // ===============================================
-            // 💡 NOTIFIKASI WHATSAPP UNTUK CUSTOMER
+            // 💡 4. LOGIKA NOTIFIKASI WHATSAPP
             // ===============================================
+
+            // A. Kirim ke Customer
             $user = Auth::user();
+            // Fallback jika user belum isi no hp, pakai nomor admin agar tidak error/crash
+            $customerPhone = $user->phone ?? env('ADMIN_WA_NUMBER');
 
-            // Asumsi Model User memiliki field 'phone'
-            // Jika tidak ada, kamu harus menambahkan kolom 'phone' ke tabel users
-            $customerPhone = $user->phone ?? '6281234567890'; // ⚠️ Ganti dengan nomor Admin/Fallback jika $user->phone tidak tersedia
+            $customerMsg = "Halo *{$user->name}*! 👋\n\n"
+                         . "Booking kamu berhasil dibuat!\n"
+                         . "------------------------------\n"
+                         . "Invoice: *{$rental->invoice_no}*\n"
+                         . "Total: *Rp " . number_format($rental->total_price, 0, ',', '.') . "*\n"
+                         . "Durasi: {$duration} Hari\n"
+                         . "------------------------------\n"
+                         . "Silakan lakukan pembayaran dan konfirmasi ke Admin.";
 
-            $message = "Halo *{$user->name}*,\n\n"
-                     . "Booking sewa alat Anda di GoRent berhasil dibuat!\n"
-                     . "Invoice: *{$rental->invoice_no}*\n"
-                     . "Total Biaya: *Rp " . number_format($rental->total_price, 0, ',', '.') . "*\n"
-                     . "Mulai Sewa: {$rental->start_date->format('d/m/Y')}\n"
-                     . "Pengembalian: {$rental->end_date->format('d/m/Y')}\n\n"
-                     . "Segera lakukan pembayaran dan konfirmasi melalui link yang tersedia di riwayat transaksi Anda.";
+            $this->waService->sendMessage($customerPhone, $customerMsg);
 
-            $this->waService->sendMessage($customerPhone, $message);
-            // ===============================================
-
-            // ===============================================
-            // 💡 NOTIFIKASI WHATSAPP UNTUK ADMIN 💡
-            // ===============================================
+            // B. Kirim ke Admin
             $adminPhone = env('ADMIN_WA_NUMBER');
-
             if ($adminPhone) {
-                $adminMessage = "🔔 *PESANAN BARU* 🔔\n\n"
-                              . "Customer: *{$user->name}*\n"
-                              . "Invoice: *{$rental->invoice_no}*\n"
-                              . "Total: *Rp " . number_format($rental->total_price, 0, ',', '.') . "*\n"
-                              . "Periode: {$rental->start_date->format('d/m/Y')} s/d {$rental->end_date->format('d/m/Y')}\n\n"
-                              . "Status saat ini: PENDING BAYAR.\n"
-                              . "Cek di: " . route('admin.rentals.show', $rental->id); // Tambahkan link ke detail nota Admin
+                $adminMsg = "🔔 *ORDER BARU MASUK* 🔔\n\n"
+                          . "Customer: {$user->name}\n"
+                          . "Invoice: {$rental->invoice_no}\n"
+                          . "Total: Rp " . number_format($rental->total_price, 0, ',', '.') . "\n\n"
+                          . "Mohon cek dashboard admin untuk verifikasi.";
 
-                $this->waService->sendMessage($adminPhone, $adminMessage);
+                $this->waService->sendMessage($adminPhone, $adminMsg);
             }
 
-            // Hapus Keranjang dari Session
+            // Hapus session keranjang
             $request->session()->forget('cart');
 
             return redirect()->route('rentals.history')
-                ->with('success', 'Booking berhasil! Silakan lakukan pembayaran.');
+                ->with('success', 'Booking berhasil! Cek WhatsApp kamu untuk detail pesanan.');
 
         } catch (\Exception $e) {
-            // Rollback (Batalkan semua perubahan jika ada error)
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
-    public function create()
+    public function paymentForm(Rental $rental)
     {
-        // 1. Ambil data keranjang dari session
-        $cart = session()->get('cart', []);
+        // Validasi: User hanya bisa akses transaksinya sendiri & status harus pending/rejected
+        if ($rental->user_id !== Auth::id()) {
+            abort(403);
+        }
 
-        // 2. Ambil detail barang dari Database berdasarkan ID yang ada di session
-        // (Supaya data harga & stok selalu fresh dari DB, bukan dari cache session lama)
-        $tools = Tool::whereIn('id', array_keys($cart))->get();
+        // Jika sudah lunas/active, tidak perlu bayar lagi
+        if (!in_array($rental->status, ['pending'])) {
+            return redirect()->route('rentals.history')->with('success', 'Transaksi ini sudah diproses.');
+        }
 
-        return view('rentals.create', compact('tools'));
+        return view('rentals.payment', compact('rental'));
+    }
+
+    public function uploadPayment(Request $request, Rental $rental)
+    {
+        $request->validate([
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Max 2MB
+        ]);
+
+        if ($request->file('payment_proof')) {
+            // 1. Simpan Gambar ke folder 'public/payments'
+            $path = $request->file('payment_proof')->store('payments', 'public');
+
+            // 2. Update Status jadi 'paid' (Menunggu Verifikasi)
+            $rental->update([
+                'payment_proof' => $path,
+                'status' => 'paid',
+                'rejection_reason' => null // Reset alasan tolak jika ada
+            ]);
+
+            // 3. Notifikasi WA ke Admin
+            $adminPhone = env('ADMIN_WA_NUMBER');
+            if($adminPhone) {
+                $msg = "🔔 *KONFIRMASI PEMBAYARAN* 🔔\n\n" .
+                       "Invoice: *{$rental->invoice_no}*\n" .
+                       "Customer: {$rental->user->name}\n" .
+                       "Total: Rp " . number_format($rental->total_price) . "\n\n" .
+                       "Mohon cek dashboard admin untuk verifikasi bukti pembayaran.";
+
+                $this->waService->sendMessage($adminPhone, $msg);
+            }
+
+            return redirect()->route('rentals.history')->with('success', 'Bukti pembayaran terkirim! Menunggu konfirmasi admin.');
+        }
+
+        return back()->with('error', 'Gagal upload gambar.');
     }
 
     public function history()
     {
-        // Ambil data rental milik user yang login
-        // Urutkan dari yang terbaru
-        $rentals = Rental::where('user_id', Auth::user()->id)
-            ->with(['items.tool']) // Load relasi items & tool biar query ringan
+        $rentals = Rental::where('user_id', Auth::id())
+            ->with(['items.tool'])
             ->latest()
             ->paginate(10);
 

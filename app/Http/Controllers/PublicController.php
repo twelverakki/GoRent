@@ -13,8 +13,6 @@ class PublicController extends Controller
     {
         // Ambil 4 barang terbaru untuk ditampilkan di Homepage
         $tools = Tool::with('category')
-                    ->where('stock', '>', 0)
-                    ->where('is_available', true)
                     ->latest()
                     ->take(4)
                     ->get();
@@ -22,28 +20,23 @@ class PublicController extends Controller
         return view('welcome', compact('tools'));
     }
 
-    public function tools()
+    public function tools(Request $request)
     {
-        $tools = Tool::with('category')
-                    ->latest()
-                    ->paginate(12);
+        $query = Tool::with('category');
 
-        // Ambil data kategori untuk sidebar/filter
-        $categories = Category::all();
+        $query->when($request->search, function ($q) use ($request) {return $q->where('name', 'like', '%' . $request->search . '%');});
 
-        return view('catalog', compact('tools', 'categories'));
+        $tools = $query->latest()->paginate(12)->withQueryString();
+
+        return view('catalog', compact('tools'));
     }
 
     // Halaman Detail Alat
-    // Kita pakai binding 'slug' biar URL-nya cantik (gorent.com/alat/sony-a7)
     public function show(Tool $tool)
     {
-        // Pastikan kita muat kategori agar bisa ditampilkan
         $user = Auth::user();
         $tool->load('category');
 
-        // Cukup kirim $tool saja.
-        // Data user ambil langsung di Blade pakai Auth::user()
         return view('tool-detail', compact('tool', 'user'));
     }
 }
